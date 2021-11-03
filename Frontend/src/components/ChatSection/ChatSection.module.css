@@ -1,0 +1,15 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  flex: 0.7;
+  background-color: #fff;
+}
+
+@media (max-width: 768px) {
+  .chat {
+    position: absolute;
+    left: 100vh;
+    visibility: hidden;
+  }
+}

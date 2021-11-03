@@ -1,0 +1,14 @@
+.btn,
+.btn:hover {
+  background-color: #19af64;
+  cursor: pointer;
+  border: none;
+  height: 40px;
+  font-size: 1rem;
+  color: white;
+  margin-top: 25px;
+}
+
+.btn:hover {
+  background-color: #44ca87;
+}

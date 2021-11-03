@@ -1,0 +1,59 @@
+.sidebar-chats {
+  margin: 10px;
+  background-color: white;
+  overflow: scroll;
+  flex: 1;
+}
+
+.chat-tile {
+  display: flex;
+  padding: 12px;
+  cursor: pointer;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
+  align-items: flex-start;
+}
+
+a {
+  text-decoration: none !important;
+  color: black;
+}
+
+.chat-tile__text h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.chat-tile > p {
+  font-size: small;
+}
+.chat-tile:hover {
+  background-color: rgb(235, 228, 228);
+}
+.chat-tile-active {
+  background-color: lightgray;
+}
+
+.chat-tile__text {
+  display: flex;
+  font-family: inherit;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.chat-tile__text p {
+  max-height: 25px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .chat-tile-active,
+  .chat-tile:hover {
+    background-color: white;
+  }
+}

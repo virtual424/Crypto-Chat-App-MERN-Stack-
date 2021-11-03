@@ -1,0 +1,14 @@
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  align-items: center;
+  border-right: 1px solid lightgray;
+}
+
+.sidebar-header__right {
+  display: flex;
+  justify-content: space-between;
+  min-width: 10vw;
+  align-items: center;
+}

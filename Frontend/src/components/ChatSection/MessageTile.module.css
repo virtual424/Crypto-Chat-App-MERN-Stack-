@@ -1,0 +1,25 @@
+.message-tile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: fit-content;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  padding: 10px;
+  flex-direction: column;
+  background-color: #ffff;
+  border-radius: 10px 10px 10px 0;
+  max-width: 70%;
+}
+
+.chat-reciever {
+  background-color: #dcf8c6;
+  margin-left: auto;
+  border-radius: 10px 10px 0 10px;
+}
+
+.chat__timeStamp {
+  font-size: xx-small;
+
+  margin-left: 10px;
+}

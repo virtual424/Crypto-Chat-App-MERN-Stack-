@@ -1,0 +1,12 @@
+.new-chat label {
+  font-weight: bold;
+}
+
+.new-chat h2 {
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.button {
+  padding: 0 1rem;
+}
