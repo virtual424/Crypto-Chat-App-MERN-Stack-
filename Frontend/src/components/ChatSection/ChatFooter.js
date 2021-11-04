@@ -9,10 +9,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { sendMessage, uploadFile } from "../../store/database";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import { IconButton } from "@material-ui/core";
-import { fetchRoomName } from "../../store/database";
 import Dropzone from "react-dropzone";
 import crypto from "crypto";
-import { userActions } from "../../store/userSlice";
+import { uiActions } from "../../store/uiSlice";
 
 const speechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -25,50 +24,16 @@ mic.lang = "en-IN";
 const ChatFooter = () => {
   const { messageRoomId } = useParams();
   const [isListening, setIsListening] = useState(false);
+  const dispatch = useDispatch();
   const userName = useSelector((state) => state.userReducer.userName);
   const authToken = useSelector((state) => state.userReducer.token);
-  const userId = useSelector((state) => state.userReducer.userId);
-  // const publicKeys = useSelector((state) => state.userReducer.publicKeys);
-  // const privateKey = useSelector((state) => state.userReducer.privateKey);
-  const [roomName, setRoomName] = useState(null);
-  const dispatch = useDispatch();
-  const sharedKey = useSelector((state) => state.userReducer.sharedKey);
-
-  useEffect(() => {
-    fetchRoomName(userName, messageRoomId, userId, authToken).then(
-      (roomData) => {
-        if (roomData) {
-          setRoomName(roomData.roomName);
-          // setPublicKey();
-        }
-      }
-    );
-  }, [messageRoomId, userId, userName, authToken]);
-
-  useEffect(() => {
-    // if (roomName) {
-    //   const document = publicKeys.filter((doc) => doc.username === roomName);
-    //   const key = document[0].key;
-    //   const ecdh = crypto.createECDH("secp256k1");
-    //   ecdh.setPrivateKey(privateKey, "base64");
-    //   const sharedSecret = ecdh.computeSecret(key, "base64", "hex");
-    //   dispatch(userActions.setSharedKey({ sharedKey: sharedSecret }));
-    // }
-  }, [roomName]);
-
-  const uploadFileHandler = async (files, sharedKey) => {
-    try {
-      const reponse = await uploadFile(
-        authToken,
-        userName,
-        messageRoomId,
-        files,
-        sharedKey
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const rooms = useSelector((state) => state.chatReducer.rooms);
+  let sharedKey;
+  if (messageRoomId) {
+    sharedKey = rooms.find(
+      (room) => room.roomId === messageRoomId
+    ).sharedSecret;
+  }
 
   const {
     enteredInput: enteredMessage,
@@ -78,26 +43,66 @@ const ChatFooter = () => {
     setTranscript,
   } = useInput(/.*/, isListening);
 
+  const uploadFileHandler = async (files, sharedKey) => {
+    try {
+      await uploadFile(authToken, userName, messageRoomId, files, sharedKey);
+    } catch (error) {
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: error.message,
+        })
+      );
+      console.log(error);
+    }
+  };
+
+  const encryptMessage = (message) => {
+    try {
+      if (sharedKey) {
+        console.log("senders Shared Key: ", sharedKey);
+        const IV = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv(
+          "aes-256-gcm",
+          Buffer.from(sharedKey, "hex"),
+          IV
+        );
+
+        let encrypt = cipher.update(message, "utf8", "hex");
+        encrypt += cipher.final("hex");
+        //
+        //isjdngljdnglksjngsidughsdogqsoudghpqeoighpqeoigongoqwrngp
+        //
+        const authTag = cipher.getAuthTag().toString("hex");
+        const payload = IV.toString("hex") + encrypt + authTag;
+        const payload64 = Buffer.from(payload, "hex").toString("base64");
+
+        resetMessage();
+        return payload64;
+      } else {
+        throw new Error(
+          "Cannot Encrypt Message. Please Check your private Key"
+        );
+      }
+    } catch (error) {
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: error.message,
+        })
+      );
+      console.log(error.message);
+    }
+  };
+
   const sendMessageHandler = (event) => {
     event.preventDefault();
-
-    if (sharedKey) {
-      const IV = crypto.randomBytes(16);
-      const cipher = crypto.createCipheriv(
-        "aes-256-gcm",
-        Buffer.from(sharedKey, "hex"),
-        IV
-      );
-      let encrypt = cipher.update(enteredMessage, "utf8", "hex");
-      encrypt += cipher.final("hex");
-      const authTag = cipher.getAuthTag().toString("hex");
-      const payload = IV.toString("hex") + encrypt + authTag;
-      const payload64 = Buffer.from(payload, "hex").toString("base64");
-      sendMessage(payload64, userName, messageRoomId, authToken);
-      resetMessage();
-    } else {
-      console.log("cannot send");
-    }
+    console.log("Entered Message: ", enteredMessage);
+    const encryptedMessage = encryptMessage(enteredMessage);
+    console.log("Encrypted Message: ", encryptedMessage);
+    sendMessage(encryptedMessage, userName, messageRoomId, authToken);
   };
 
   mic.onstart = () => {
@@ -111,13 +116,29 @@ const ChatFooter = () => {
       .join("");
     setTranscript(transcript);
     mic.onerror = (event) => {
-      console.log(event.error);
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: event.error.message,
+        })
+      );
     };
   };
 
   mic.onend = () => {
-    console.log("stopeed mic");
-    sendMessage(enteredMessage, userName, messageRoomId, authToken);
+    if (enteredMessage.length === 0) return;
+    const message = encryptMessage(enteredMessage);
+    sendMessage(message, userName, messageRoomId, authToken).catch((error) => {
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: error.message,
+        })
+      );
+      console.log(error);
+    });
     resetMessage();
   };
 
@@ -128,14 +149,6 @@ const ChatFooter = () => {
       mic.stop();
     }
   }, [isListening]);
-
-  // const handleListening = () => {
-  //   if (isListening) {
-  //     mic.start();
-  //   } else {
-  //     mic.stop();
-  //   }
-  // };
 
   useEffect(() => {
     handleListening();

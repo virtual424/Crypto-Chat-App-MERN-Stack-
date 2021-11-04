@@ -62,7 +62,7 @@ const SidebarHeader = () => {
   return (
     <div className={styles["sidebar-header"]}>
       <Avatar
-        style={{ height: "50px", width: "50px" }}
+        style={{ height: "40px", width: "40px" }}
         alt="User Profile image"
         src={userProfile}
       />

@@ -7,11 +7,13 @@ import { Switch, Route } from "react-router-dom";
 import ErrorDialog from "./components/UI/Dialog";
 import AuthForm from "./Pages/Auth/AuthForm";
 import * as crypto from "crypto";
+import WelcomePage from "./components/UI/WelcomePage";
 
 const App = () => {
   const authToken = useSelector((state) => state.userReducer.token);
   const message = useSelector((state) => state.uiReducer.message);
   const title = useSelector((state) => state.uiReducer.title);
+  const rooms = useSelector((state) => state.chatReducer.rooms);
 
   return (
     <React.Fragment>
@@ -21,10 +23,10 @@ const App = () => {
             <SideBar />
             <Switch>
               <Route path="/rooms/:messageRoomId">
-                <ChatSection />
+                {rooms.length > 0 && <ChatSection />}
               </Route>
               <Route path="/">
-                <ChatSection />
+                <WelcomePage />
               </Route>
             </Switch>
           </div>
@@ -36,16 +38,5 @@ const App = () => {
     </React.Fragment>
   );
 };
-
-// const alice = crypto.getDiffieHellman("modp15");
-// const bob = crypto.getDiffieHellman("modp15");
-
-// alice.generateKeys();
-// bob.generateKeys();
-
-// const a = alice.computeSecret(bob.getPublicKey(), null, "hex");
-// const b = bob.computeSecret(alice.getPublicKey(), null, "hex");
-
-// console.log(a, b);
 
 export default App;

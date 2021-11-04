@@ -1,7 +1,6 @@
 .sidebar-chats {
-  margin: 10px;
   background-color: white;
-  overflow: scroll;
+  overflow-y: scroll;
   flex: 1;
 }
 
@@ -21,7 +20,7 @@ a {
 
 .chat-tile__text h2 {
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .left {
@@ -42,12 +41,15 @@ a {
 .chat-tile__text {
   display: flex;
   font-family: inherit;
+  font-weight: 400;
   flex-direction: column;
   margin-left: 20px;
 }
 
 .chat-tile__text p {
   max-height: 25px;
+  color: gray;
+  font-size: small;
   overflow: hidden;
 }
 

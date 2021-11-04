@@ -1,9 +1,9 @@
 .chat-header {
   display: flex;
+  height: 15px;
   align-items: center;
   background-color: #ededed;
-  padding: 10px 15px;
-  border-bottom: 1px solid lightgray;
+  padding: 20px;
 }
 
 .chat-header__info {
@@ -13,14 +13,16 @@
 
 .chat-header__info p {
   color: gray;
+  font-size: 0.8rem;
 }
 .chat-header__info h3 {
-  font-weight: 500;
+  font-weight: 400;
+  font-size: 1.1rem;
 }
 
 .chat-header__right {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   min-width: 10vw;
   align-items: center;
 }

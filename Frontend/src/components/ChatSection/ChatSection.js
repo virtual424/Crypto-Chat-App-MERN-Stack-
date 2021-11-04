@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
 import ChatHeader from "./ChatHeader";

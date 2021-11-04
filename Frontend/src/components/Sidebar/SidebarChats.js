@@ -6,12 +6,11 @@ import Pusher from "pusher-js";
 import { chatActions, decryptMessage } from "../../store/chatSlice.js";
 import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
-// import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import { uiActions } from "../../store/uiSlice.js";
 
 const SidebarChats = () => {
   const [activeId, setActiveId] = useState("");
-
   const dispatch = useDispatch();
   const rooms = useSelector((state) => state.chatReducer.rooms);
   const userId = useSelector((state) => state.userReducer.userId);
@@ -19,7 +18,9 @@ const SidebarChats = () => {
   const authToken = useSelector((state) => state.userReducer.token);
 
   useEffect(() => {
-    fetchRooms(userId, dispatch, authToken);
+    fetchRooms(userId, authToken).then((rooms) => {
+      dispatch(chatActions.addRooms({ rooms: rooms }));
+    });
   }, [userId, dispatch, authToken]);
 
   useEffect(() => {
@@ -59,7 +60,8 @@ const SidebarChats = () => {
             active={activeId === room.roomId}
             name={roomName}
             avatarUrl={avatarUrl}
-            messageRoomId={room?.roomId}
+            sharedKey={room.sharedSecret}
+            messageRoomId={room.roomId ? room.roomId : ""}
           />
         );
       })}
@@ -68,22 +70,30 @@ const SidebarChats = () => {
 };
 
 const ChatTile = (props) => {
-  const dispatch = useDispatch();
   const [recentMessage, setRecentMessage] = useState(null);
-  const authToken = useSelector((state) => state.userReducer.token);
-
-  const sharedKey = useSelector((state) => state.userReducer.sharedKey);
   const history = useHistory();
+  const authToken = useSelector((state) => state.userReducer.token);
+  const dispatch = useDispatch();
+  const messageRoomId = props.messageRoomId;
+  console.log(messageRoomId);
 
   useEffect(() => {
-    getRecentMessage(
-      props.messageRoomId,
-      setRecentMessage,
-      "DESC",
-      authToken,
-      sharedKey
-    );
-  }, [props.messageRoomId, authToken]);
+    getRecentMessage(messageRoomId, "DESC", authToken)
+      .then((message) => {
+        const decryptedMessage = decryptMessage(message, props.sharedKey);
+        setRecentMessage(decryptedMessage);
+      })
+      .catch((error) => {
+        dispatch(
+          uiActions.showDialog({
+            type: "ERROR",
+            title: "Error",
+            message: error.message,
+          })
+        );
+        console.log(error);
+      });
+  }, [messageRoomId, authToken]);
 
   useEffect(() => {
     const pusher = new Pusher("e32b36b52c95aaf22268", {
@@ -92,15 +102,16 @@ const ChatTile = (props) => {
 
     const channel = pusher.subscribe("messages");
     channel.bind("inserted", function (data) {
-      if (data.roomId === props.messageRoomId)
-        setRecentMessage(decryptMessage(data, sharedKey));
+      if (data.roomId === messageRoomId) {
+        setRecentMessage(decryptMessage(data, props.sharedKey));
+      }
     });
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [props.messageRoomId]);
+  }, [messageRoomId]);
 
   const titleClassName = props.active
     ? `${styles["chat-tile"]} ${styles["chat-tile-active"]}`
@@ -118,30 +129,10 @@ const ChatTile = (props) => {
   } else {
     message = recentMessage?.message;
   }
-  // return (
-  //   <Link
-  //     to={`/rooms/${props.messageRoomId}`}
-  //     onClick={() => props.onActive(props.id)}
-  //   >
-  //     <div className={titleClassName}>
-  //       <div className={styles.left}>
-  //         <Avatar
-  //           style={{ height: "50px", width: "50px" }}
-  //           src={props.avatarUrl}
-  //         />
-  //         <div className={styles["chat-tile__text"]}>
-  //           <h2>{props.name}</h2>
-  //           <p>{message}</p>
-  //         </div>
-  //       </div>
-  //       <p>{time}</p>
-  //     </div>
-  //   </Link>
-  // );
 
   const clickHandler = () => {
     props.onActive(props.id);
-    history.push(`/rooms/${props.messageRoomId}`);
+    history.push(`/rooms/${messageRoomId}`);
   };
 
   return (

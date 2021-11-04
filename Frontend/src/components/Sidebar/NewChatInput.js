@@ -4,8 +4,9 @@ import Modal from "../UI/Modal";
 import { addRoom } from "../../store/database";
 import styles from "./NewChatInput.module.css";
 import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ReactDOM from "react-dom";
+import { uiActions } from "../../store/uiSlice";
 import Backdrop from "../UI/Backdrop";
 
 const NewChatInputModal = (props) => {
@@ -13,6 +14,7 @@ const NewChatInputModal = (props) => {
   const userId = useSelector((state) => state.userReducer.userId);
   const profileUrl = useSelector((state) => state.userReducer.profileUrl);
   const authToken = useSelector((state) => state.userReducer.token);
+  const dispatch = useDispatch();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -21,7 +23,16 @@ const NewChatInputModal = (props) => {
     if (enteredName.trim() === "") {
       return;
     }
-    addRoom(enteredName, userId, profileUrl, authToken);
+    addRoom(enteredName, userId, profileUrl, authToken).catch((error) => {
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: error.message,
+        })
+      );
+      console.log(error);
+    });
     props.onCancel();
   };
 

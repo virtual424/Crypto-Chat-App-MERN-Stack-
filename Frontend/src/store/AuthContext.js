@@ -8,6 +8,7 @@ import styles from "../App.module.css";
 import moment from "moment";
 import crypto from "crypto";
 import axios from "axios";
+import { chatActions } from "./chatSlice";
 
 const AuthContext = React.createContext({
   isLoading: true,
@@ -20,12 +21,19 @@ export const AuthContextProvider = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
   const dispatch = useDispatch();
-  const keys = useSelector((state) => state.userReducer.publicKeys);
 
   const parseJwt = (token) => {
     try {
       return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
+    } catch (error) {
+      dispatch(
+        uiActions.showDialog({
+          type: "ERROR",
+          title: "Error",
+          message: error.message,
+        })
+      );
+      console.log(error);
       return null;
     }
   };
@@ -47,9 +55,20 @@ export const AuthContextProvider = (props) => {
           })
         );
 
-        fetchPublicKeys().then((publicKeys) => {
-          dispatch(userActions.setKeys({ publicKeys }));
-        });
+        fetchPublicKeys()
+          .then((publicKeys) => {
+            dispatch(chatActions.setKeys({ publicKeys }));
+          })
+          .catch((error) => {
+            dispatch(
+              uiActions.showDialog({
+                type: "ERROR",
+                title: "Error",
+                message: error.message,
+              })
+            );
+            console.log(error);
+          });
       }
     }
     setIsLoading(false);
@@ -60,7 +79,6 @@ export const AuthContextProvider = (props) => {
 
     const ecdh = crypto.createECDH("secp256k1");
     ecdh.generateKeys();
-
     const publicKey = ecdh.getPublicKey().toString("base64");
     const privateKey = ecdh.getPrivateKey().toString("base64");
 
@@ -91,6 +109,7 @@ export const AuthContextProvider = (props) => {
           privateKey,
         })
       );
+
       dispatch(
         uiActions.showDialog({
           type: "MESSAGE",
@@ -98,7 +117,7 @@ export const AuthContextProvider = (props) => {
           message: `This is your privateKey kindly keep it safe: ${privateKey}`,
         })
       );
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       dispatch(
         uiActions.showDialog({
@@ -107,6 +126,7 @@ export const AuthContextProvider = (props) => {
           message: error.message,
         })
       );
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +134,7 @@ export const AuthContextProvider = (props) => {
 
   const signInHandler = async (email, password, privateKey) => {
     setIsLoading(true);
+
     try {
       const { data } = await axios.post(
         "http://localhost:8080/api/auth/login",
@@ -138,6 +159,7 @@ export const AuthContextProvider = (props) => {
           privateKey,
         })
       );
+
       window.location.reload();
     } catch (error) {
       dispatch(
@@ -147,6 +169,7 @@ export const AuthContextProvider = (props) => {
           message: error.message,
         })
       );
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -154,15 +177,15 @@ export const AuthContextProvider = (props) => {
 
   const signOutHandler = async () => {
     setIsLoading(true);
+
     try {
       const status = moment(Date.now()).format("LT");
       const userId = localStorage.getItem("userId");
-      const { data } = await axios.post(
-        `http://localhost:8080/api/auth/${userId}/logout`,
-        {
-          status,
-        }
-      );
+
+      await axios.post(`http://localhost:8080/api/auth/${userId}/logout`, {
+        status,
+      });
+
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
       localStorage.removeItem("userId");
@@ -179,6 +202,7 @@ export const AuthContextProvider = (props) => {
         })
       );
       history.push("/");
+
       window.location.reload();
     } catch (error) {
       dispatch(
@@ -188,6 +212,7 @@ export const AuthContextProvider = (props) => {
           message: error.message,
         })
       );
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -221,7 +246,14 @@ export const AuthContextProvider = (props) => {
 };
 
 export const fetchPublicKeys = async () => {
-  const response = await axios.get("http://localhost:8080/api/keys/fetchKeys");
-  return response.data.keys;
+  try {
+    const response = await axios.get(
+      "http://localhost:8080/api/keys/fetchKeys"
+    );
+    return response.data.keys;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
+
 export default AuthContext;

@@ -9,13 +9,13 @@ import { useParams } from "react-router-dom";
 import { fetchRoomName } from "../../store/database";
 
 const ChatHeader = () => {
+  const { messageRoomId } = useParams();
   const [roomName, setRoomName] = useState("");
   const [roomProfileUrl, setRoomProfileUrl] = useState(null);
   const userId = useSelector((state) => state.userReducer.userId);
   const userName = useSelector((state) => state.userReducer.userName);
   const authToken = useSelector((state) => state.userReducer.token);
 
-  const { messageRoomId } = useParams();
   useEffect(() => {
     fetchRoomName(userName, messageRoomId, userId, authToken).then(
       (roomData) => {
@@ -29,20 +29,17 @@ const ChatHeader = () => {
 
   return (
     <div className={styles["chat-header"]}>
-      <Avatar style={{ height: "50px", width: "50px" }} src={roomProfileUrl} />
+      <Avatar style={{ height: "35px", width: "35px" }} src={roomProfileUrl} />
       <div className={styles["chat-header__info"]}>
         <h3>{roomName}</h3>
-        <p>Online</p>
+        <p>online</p>
       </div>
       <div className={styles["chat-header__right"]}>
         <IconButton>
-          <SearchIcon />
+          <SearchIcon style={{ height: "20px", width: "20px" }} />
         </IconButton>
         <IconButton>
-          <AttachFileIcon />
-        </IconButton>
-        <IconButton>
-          <MoreVertIcon />
+          <MoreVertIcon style={{ height: "20px", width: "20px" }} />
         </IconButton>
       </div>
     </div>

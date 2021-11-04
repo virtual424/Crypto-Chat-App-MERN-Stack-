@@ -1,5 +1,4 @@
 import axios from "axios";
-import { chatActions, decryptMessage } from "./chatSlice";
 import crypto from "crypto";
 
 const addRoom = async (enteredName, userId, profileUrl, authToken) => {
@@ -18,17 +17,17 @@ const addRoom = async (enteredName, userId, profileUrl, authToken) => {
       messages: [],
     };
 
-    const response = await axios.post(
+    await axios.post(
       `http://localhost:8080/api/chats/rooms/${userId}/addRooms`,
       data,
       config
     );
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
-const fetchRooms = async (userId, dispatch, authToken) => {
+const fetchRooms = async (userId, authToken) => {
   const config = {
     headers: {
       authorization: `Bearer ${authToken}`,
@@ -36,22 +35,21 @@ const fetchRooms = async (userId, dispatch, authToken) => {
   };
 
   try {
-    const rooms = await axios.get(
+    const response = await axios.get(
       `http://localhost:8080/api/chats/rooms/${userId}/getRooms`,
       config
     );
-
-    if (rooms.data.data) {
-      dispatch(chatActions.addRooms({ rooms: rooms.data.data }));
+    const rooms = response.data.data;
+    if (rooms) {
+      return rooms;
     }
   } catch (error) {
-    console.log(error.message);
+    throw error;
   }
 };
 
 const fetchMessages = async (
   messageRoomId,
-  dispatch,
   sortOrder,
   authToken,
   sharedKey
@@ -64,21 +62,16 @@ const fetchMessages = async (
   try {
     if (!messageRoomId) return;
 
-    const messages = await axios.get(
+    const response = await axios.get(
       `http://localhost:8080/api/chats/messages/${messageRoomId}/fetchMessages/${sortOrder}`,
       config
     );
-
-    if (messages.data.data) {
-      dispatch(
-        chatActions.addMessages({
-          messages: messages.data.data,
-          key: sharedKey,
-        })
-      );
+    const messages = response.data.data;
+    if (messages) {
+      return messages;
     }
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -105,7 +98,7 @@ const sendMessage = async (
       config
     );
   } catch (error) {
-    console.log(error.message);
+    throw error;
   }
 };
 
@@ -129,28 +122,20 @@ const fetchRoomName = async (username, roomId, userId, authToken) => {
     if (!room) return;
 
     const roomName = room.creator === username ? room.reciever : room.creator;
+
     const roomProfileUrl =
       room.creator === username
         ? room.recieverProfileUrl
         : room.creatorProfileUrl;
+
     const roomData = { roomName, roomProfileUrl };
     return roomData;
-    // setRoomName(roomName);
-    // if (setProfileUrl) {
-    //   setProfileUrl(roomProfileUrl);
-    // }
   } catch (error) {
-    console.log(error.message);
+    throw error;
   }
 };
 
-const getRecentMessage = async (
-  messageRoomId,
-  setRecentMessage,
-  sortOrder,
-  authToken,
-  sharedKey
-) => {
+const getRecentMessage = async (messageRoomId, sortOrder, authToken) => {
   const config = {
     headers: {
       authorization: `Bearer ${authToken}`,
@@ -160,17 +145,16 @@ const getRecentMessage = async (
   try {
     if (!messageRoomId) return;
 
-    const messages = await axios.get(
+    const response = await axios.get(
       `http://localhost:8080/api/chats/messages/${messageRoomId}/fetchMessages/${sortOrder}`,
       config
     );
-
-    if (messages.data.data) {
-      const message = decryptMessage(messages.data.data[0], sharedKey);
-      setRecentMessage(message);
+    const messages = response.data.data;
+    if (messages) {
+      return messages[0];
     }
   } catch (error) {
-    console.log(error.message);
+    throw error;
   }
 };
 
@@ -183,29 +167,6 @@ const fileToBase64 = (file) => {
     reader.readAsDataURL(file);
   });
 };
-
-// function base64ImageToBlob(str) {
-//   // extract content type and base64 payload from original string
-//   // var pos = str.indexOf("base64");
-//   // var b64 = str.substr(pos + 6);
-
-//   // decode base64
-//   var imageContent = atob(str);
-
-//   // create an ArrayBuffer and a view (as unsigned 8-bit)
-//   var buffer = new ArrayBuffer(imageContent.length);
-//   var view = new Uint8Array(buffer);
-
-//   // fill the view, using the decoded base64
-//   for (var n = 0; n < imageContent.length; n++) {
-//     view[n] = imageContent.charCodeAt(n);
-//   }
-
-//   // convert ArrayBuffer to Blob
-//   var blob = new Blob([buffer], { type: "text/plain" });
-
-//   return blob;
-// }
 
 const uploadFile = async (
   authToken,
@@ -247,7 +208,7 @@ const uploadFile = async (
       config
     );
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
