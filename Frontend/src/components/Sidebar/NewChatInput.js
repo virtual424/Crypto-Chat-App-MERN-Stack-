@@ -28,7 +28,7 @@ const NewChatInputModal = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.message,
+          message: error.response.data.error,
         })
       );
       console.log(error);
