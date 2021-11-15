@@ -51,7 +51,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);
@@ -71,9 +71,7 @@ const ChatFooter = () => {
 
         let encrypt = cipher.update(message, "utf8", "hex");
         encrypt += cipher.final("hex");
-        //
-        //isjdngljdnglksjngsidughsdogqsoudghpqeoighpqeoigongoqwrngp
-        //
+
         const authTag = cipher.getAuthTag().toString("hex");
         const payload = IV.toString("hex") + encrypt + authTag;
         const payload64 = Buffer.from(payload, "hex").toString("base64");
@@ -90,10 +88,10 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
-      console.log(error.response.data.error);
+      console.log(error.message);
     }
   };
 
@@ -120,7 +118,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: event.error.response.data.error,
+          message: event.error.message,
         })
       );
     };
@@ -134,7 +132,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);

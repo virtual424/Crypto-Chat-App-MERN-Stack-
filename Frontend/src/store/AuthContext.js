@@ -30,7 +30,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);
@@ -64,7 +64,7 @@ export const AuthContextProvider = (props) => {
               uiActions.showDialog({
                 type: "ERROR",
                 title: "Error",
-                message: error.response.data.error,
+                message: error.message,
               })
             );
             console.log(error);
@@ -123,7 +123,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);
@@ -166,7 +166,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);
@@ -209,7 +209,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.message,
         })
       );
       console.log(error);
