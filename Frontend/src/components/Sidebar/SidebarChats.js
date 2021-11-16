@@ -75,7 +75,6 @@ const ChatTile = (props) => {
   const authToken = useSelector((state) => state.userReducer.token);
   const dispatch = useDispatch();
   const messageRoomId = props.messageRoomId;
-  console.log(messageRoomId);
 
   useEffect(() => {
     getRecentMessage(messageRoomId, "DESC", authToken)
@@ -91,7 +90,6 @@ const ChatTile = (props) => {
             message: error.response.data.error,
           })
         );
-        console.log(error);
       });
   }, [messageRoomId, authToken]);
 

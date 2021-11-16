@@ -53,7 +53,7 @@ const MessageTile = (props) => {
         );
         setMediaMessage(src);
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     }
   };

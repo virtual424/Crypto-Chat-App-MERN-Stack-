@@ -18,7 +18,6 @@ const chatSlice = createSlice({
 
     addRooms(state, actions) {
       const rooms = actions.payload.rooms;
-      console.log(state.publicKeys);
       rooms.forEach((room) => {
         const roomName =
           room.creator === localStorage.getItem("userName")
@@ -62,9 +61,6 @@ const chatSlice = createSlice({
 export const decryptMessage = (message, key) => {
   if (!message || message.type !== "text") return message;
 
-  console.log("Recievers Shared Key: ", key);
-  console.log("Encrypted Message: ", message);
-
   const payload = Buffer.from(message.message, "base64").toString("hex");
   const iv = payload.substr(0, 32);
   const encrypted = payload.substr(32, payload.length - 64);
@@ -80,11 +76,9 @@ export const decryptMessage = (message, key) => {
       decipher.setAuthTag(Buffer.from(authTag, "hex"));
       let decryptedMessage = decipher.update(encrypted, "hex", "utf8");
       decryptedMessage += decipher.final("utf8");
-      console.log("Decrypted Message: ", decryptedMessage);
+
       message.message = decryptedMessage;
       return message;
-    } else {
-      console.log("Key not defined");
     }
   } catch (error) {
     throw error;

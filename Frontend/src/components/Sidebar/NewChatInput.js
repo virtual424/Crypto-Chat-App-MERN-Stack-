@@ -31,7 +31,6 @@ const NewChatInputModal = (props) => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
     });
     props.onCancel();
   };

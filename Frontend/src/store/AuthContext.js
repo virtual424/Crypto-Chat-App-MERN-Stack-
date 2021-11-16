@@ -33,7 +33,7 @@ export const AuthContextProvider = (props) => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
+
       return null;
     }
   };
@@ -67,7 +67,6 @@ export const AuthContextProvider = (props) => {
                 message: error.response.data.error,
               })
             );
-            console.log(error);
           });
       }
     }
@@ -126,7 +125,6 @@ export const AuthContextProvider = (props) => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -212,7 +210,6 @@ export const AuthContextProvider = (props) => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
     } finally {
       setIsLoading(false);
     }

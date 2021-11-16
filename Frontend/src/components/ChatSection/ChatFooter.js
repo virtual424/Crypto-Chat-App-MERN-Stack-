@@ -54,14 +54,12 @@ const ChatFooter = () => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
     }
   };
 
   const encryptMessage = (message) => {
     try {
       if (sharedKey) {
-        console.log("senders Shared Key: ", sharedKey);
         const IV = crypto.randomBytes(16);
         const cipher = crypto.createCipheriv(
           "aes-256-gcm",
@@ -91,20 +89,15 @@ const ChatFooter = () => {
           message: error.response.data.error,
         })
       );
-      console.log(error.response.data.error);
     }
   };
 
   const sendMessageHandler = (event) => {
     event.preventDefault();
-    console.log("Entered Message: ", enteredMessage);
-    const encryptedMessage = encryptMessage(enteredMessage);
-    console.log("Encrypted Message: ", encryptedMessage);
-    sendMessage(encryptedMessage, userName, messageRoomId, authToken);
-  };
 
-  mic.onstart = () => {
-    console.log("Mics on");
+    const encryptedMessage = encryptMessage(enteredMessage);
+
+    sendMessage(encryptedMessage, userName, messageRoomId, authToken);
   };
 
   mic.onresult = (event) => {
@@ -135,7 +128,6 @@ const ChatFooter = () => {
           message: error.response.data.error,
         })
       );
-      console.log(error);
     });
     resetMessage();
   };
@@ -190,11 +182,9 @@ const ChatFooter = () => {
         <IconButton
           onMouseDown={() => {
             setIsListening(true);
-            console.log("listening");
           }}
           onMouseUp={() => {
             setIsListening(false);
-            console.log("stopped listening");
           }}
         >
           <MicIcon />
