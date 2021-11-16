@@ -51,7 +51,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.message,
+          message: error.response.data.error,
         })
       );
       console.log(error);
@@ -88,10 +88,10 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.message,
+          message: error.response.data.error,
         })
       );
-      console.log(error.message);
+      console.log(error.response.data.error);
     }
   };
 
@@ -118,7 +118,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: event.error.message,
+          message: event.error.response.data.error,
         })
       );
     };
@@ -132,7 +132,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.message,
+          message: error.response.data.error,
         })
       );
       console.log(error);
