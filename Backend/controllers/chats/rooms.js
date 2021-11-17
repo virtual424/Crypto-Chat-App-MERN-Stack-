@@ -24,7 +24,7 @@ exports.addRooms = async (req, res, next) => {
     });
 
     if (recipentExists || reciever === creator) {
-      throw new Error("Room already exists");
+      throw new Error("Room already exists in your chats.");
     }
 
     const creatorObj = await User.findOne({ username: creator });

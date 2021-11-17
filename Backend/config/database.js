@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 const Pusher = require("pusher");
 
 const connectDB = async () => {
-  await mongoose.connect(
-    "mongodb+srv://HardikBhagat:uH9XcEKJOIYPD0f2@cluster0.04gkb.mongodb.net/Chat?retryWrites=true&w=majority"
-  );
+  await mongoose.connect(process.env.MONGO_URI);
 
   const pusher = new Pusher({
     appId: "1272833",

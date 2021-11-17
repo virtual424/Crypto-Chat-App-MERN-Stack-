@@ -4,6 +4,7 @@ const connectDB = require("./config/database");
 const multer = require("multer");
 const { protect } = require("./middleware/auth");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
 const fileStorage = multer.diskStorage({
@@ -27,7 +28,6 @@ app.use(express.json({ limit: "8mb" }));
 app.use((req, res, next) => {
   upload(req, res, (err) => {
     if (err) {
-      console.log(err);
       return res.json({ success: false, err: err.message });
     }
     next();

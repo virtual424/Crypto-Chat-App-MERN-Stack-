@@ -66,7 +66,9 @@ exports.uploadFiles = async (req, res, next) => {
     const room = await Room.findOne({ _id: roomId });
 
     if (!room) {
-      throw new Error("No such room exists");
+      throw new Error(
+        "No user registered with that username. Try different name"
+      );
     }
     let type;
     if (req.body.mimetype.includes("video")) {
