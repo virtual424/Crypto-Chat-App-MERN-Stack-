@@ -51,7 +51,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
     }
@@ -77,16 +77,18 @@ const ChatFooter = () => {
         resetMessage();
         return payload64;
       } else {
-        throw new Error(
+        const error = Error(
           "Cannot Encrypt Message. Please Check your private Key"
         );
+        console.log({ error });
+        throw error;
       }
     } catch (error) {
       dispatch(
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
     }
@@ -111,7 +113,9 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: event.error.response.data.error,
+          message: event.error.response
+            ? event.error.response.data.error
+            : event.error.message,
         })
       );
     };
@@ -125,7 +129,7 @@ const ChatFooter = () => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
     });

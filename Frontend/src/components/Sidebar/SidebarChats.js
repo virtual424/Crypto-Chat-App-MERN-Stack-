@@ -87,7 +87,7 @@ const ChatTile = (props) => {
           uiActions.showDialog({
             type: "ERROR",
             title: "Error",
-            message: error.response.data.error,
+            message: error.response ? error.response.data.error : error.message,
           })
         );
       });

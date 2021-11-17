@@ -6,7 +6,6 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 import ErrorDialog from "./components/UI/Dialog";
 import AuthForm from "./Pages/Auth/AuthForm";
-import * as crypto from "crypto";
 import WelcomePage from "./components/UI/WelcomePage";
 
 const App = () => {

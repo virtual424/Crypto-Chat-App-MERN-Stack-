@@ -30,7 +30,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
 
@@ -43,6 +43,13 @@ export const AuthContextProvider = (props) => {
     if (localStorage.getItem("token")) {
       const decodedJwt = parseJwt(token);
       if (decodedJwt.exp * 1000 < Date.now()) {
+        dispatch(
+          uiActions.showDialog({
+            type: "ERROR",
+            title: "Error",
+            message: "Token expired. User logged out",
+          })
+        );
         signOutHandler();
       } else {
         dispatch(
@@ -64,7 +71,9 @@ export const AuthContextProvider = (props) => {
               uiActions.showDialog({
                 type: "ERROR",
                 title: "Error",
-                message: error.response.data.error,
+                message: error.response
+                  ? error.response.data.error
+                  : error.message,
               })
             );
           });
@@ -122,7 +131,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
     } finally {
@@ -164,7 +173,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
       console.error({ error });
@@ -207,7 +216,7 @@ export const AuthContextProvider = (props) => {
         uiActions.showDialog({
           type: "ERROR",
           title: "Error",
-          message: error.response.data.error,
+          message: error.response ? error.response.data.error : error.message,
         })
       );
     } finally {

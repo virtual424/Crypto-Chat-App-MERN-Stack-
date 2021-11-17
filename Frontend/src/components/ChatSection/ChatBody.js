@@ -53,7 +53,6 @@ const ChatBody = () => {
       channel.unsubscribe();
     };
   }, [messages, dispatch]);
-
   return (
     <div className={styles["chat-body"]}>
       {messages &&

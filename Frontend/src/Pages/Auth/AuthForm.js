@@ -131,19 +131,19 @@ const AuthForm = () => {
     : `${styles.input}`;
 
   const nameErrorText = nameHasError ? (
-    <p className={styles.errorText}>Please enter a name</p>
+    <p className={styles.errorText}>Please enter a valid name</p>
   ) : null;
   const keyErrorText = keyHasError ? (
-    <p className={styles.errorText}>Please enter a key</p>
+    <p className={styles.errorText}>Please enter a valid key</p>
   ) : null;
   const emailErrorText = emailHasError ? (
-    <p className={styles.errorText}>Please enter a email address</p>
+    <p className={styles.errorText}>Please enter a valid email address</p>
   ) : null;
   const passwordErrorText = passwordHasError ? (
-    <p className={styles.errorText}>Please enter a password</p>
+    <p className={styles.errorText}>Please enter a valid password</p>
   ) : null;
   const confirmPasswordErrorText = confirmPasswordHasError ? (
-    <p className={styles.errorText}>Please enter a password</p>
+    <p className={styles.errorText}>Please enter a valid password</p>
   ) : null;
 
   const buttonText = showSignup ? "SignUp" : "SignIn";
