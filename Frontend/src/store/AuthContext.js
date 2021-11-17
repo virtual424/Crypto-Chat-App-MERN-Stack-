@@ -8,6 +8,7 @@ import styles from "../App.module.css";
 import moment from "moment";
 import crypto from "crypto";
 import axios from "axios";
+import Worker from "../workers/ecdh.worker";
 import { chatActions } from "./chatSlice";
 
 const AuthContext = React.createContext({
@@ -62,6 +63,8 @@ export const AuthContextProvider = (props) => {
           })
         );
 
+        window.worker = new Worker();
+
         fetchPublicKeys()
           .then((publicKeys) => {
             dispatch(chatActions.setKeys({ publicKeys }));
@@ -80,11 +83,15 @@ export const AuthContextProvider = (props) => {
       }
     }
     setIsLoading(false);
+
+    return () => {
+      window.worker?.terminate();
+    };
   }, [dispatch]);
 
   const signUpHandler = async (username, email, password, profileUrl) => {
     setIsLoading(true);
-
+    window.worker = new Worker();
     const ecdh = crypto.createECDH("secp256k1");
     ecdh.generateKeys();
     const publicKey = ecdh.getPublicKey().toString("base64");
@@ -141,7 +148,7 @@ export const AuthContextProvider = (props) => {
 
   const signInHandler = async (email, password, privateKey) => {
     setIsLoading(true);
-
+    window.worker = new Worker();
     try {
       const { data } = await axios.post(
         "http://localhost:8080/api/auth/login",

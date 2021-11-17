@@ -1,5 +1,4 @@
 import axios from "axios";
-import crypto from "crypto";
 
 const addRoom = async (enteredName, userId, profileUrl, authToken) => {
   try {
@@ -186,27 +185,37 @@ const uploadFile = async (
 
   try {
     const base64File = await fileToBase64(files[0]);
-    const IV = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      "aes-256-gcm",
-      Buffer.from(sharedKey, "hex"),
-      IV
-    );
-    let encrypt = cipher.update(base64File, "base64", "hex");
-    encrypt += cipher.final("hex");
-    const authTag = cipher.getAuthTag().toString("hex");
-    const payload = IV.toString("hex") + encrypt + authTag;
-    const payload64 = Buffer.from(payload, "hex").toString("base64");
-    const blob = new Blob([payload64], { type: "text/plain" });
-    const file = new File([blob], files[0].name);
-    formData.append("file", file);
-    formData.append("sender", userName);
-    formData.append("mimetype", files[0].type);
-    await axios.post(
-      `http://localhost:8080/api/chats/messages/${messageRoomId}/uploadFiles`,
-      formData,
-      config
-    );
+    // const IV = crypto.randomBytes(16);
+    // const cipher = crypto.createCipheriv(
+    //   "aes-256-gcm",
+    //   Buffer.from(sharedKey, "hex"),
+    //   IV
+    // );
+    // let encrypt = cipher.update(base64File, "base64", "hex");
+    // encrypt += cipher.final("hex");
+    // const authTag = cipher.getAuthTag().toString("hex");
+    // const payload = IV.toString("hex") + encrypt + authTag;
+    // const payload64 = Buffer.from(payload, "hex").toString("base64");
+
+    const encryptionListener = (event) => {
+      const blob = new Blob([event.data], { type: "text/plain" });
+      const file = new File([blob], files[0].name);
+      formData.append("file", file);
+      formData.append("sender", userName);
+      formData.append("mimetype", files[0].type);
+      axios
+        .post(
+          `http://localhost:8080/api/chats/messages/${messageRoomId}/uploadFiles`,
+          formData,
+          config
+        )
+        .then(() =>
+          window.worker.removeEventListener("message", encryptionListener)
+        );
+    };
+
+    window.worker.addEventListener("message", encryptionListener);
+    window.worker.postMessage({ base64File, sharedKey, type: "ENCRYPT" });
   } catch (error) {
     throw error;
   }

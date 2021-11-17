@@ -45,7 +45,7 @@ const ChatFooter = () => {
 
   const uploadFileHandler = async (files, sharedKey) => {
     try {
-      await uploadFile(authToken, userName, messageRoomId, files, sharedKey);
+      uploadFile(authToken, userName, messageRoomId, files, sharedKey);
     } catch (error) {
       dispatch(
         uiActions.showDialog({
