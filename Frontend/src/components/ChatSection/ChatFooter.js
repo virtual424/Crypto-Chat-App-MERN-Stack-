@@ -29,6 +29,7 @@ const ChatFooter = () => {
   const authToken = useSelector((state) => state.userReducer.token);
   const rooms = useSelector((state) => state.chatReducer.rooms);
   let sharedKey;
+
   if (messageRoomId) {
     sharedKey = rooms.find(
       (room) => room.roomId === messageRoomId
@@ -76,13 +77,14 @@ const ChatFooter = () => {
 
         resetMessage();
         return payload64;
-      } else {
-        const error = Error(
-          "Cannot Encrypt Message. Please Check your private Key"
-        );
-        console.log({ error });
-        throw error;
       }
+      // } else {
+      //   const error = Error(
+      //     "Cannot Encrypt Message. Please Check your private Key"
+      //   );
+      //   console.log({ error });
+      //   throw error;
+      // }
     } catch (error) {
       dispatch(
         uiActions.showDialog({

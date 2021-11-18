@@ -13,6 +13,26 @@ const chatSlice = createSlice({
   reducers: {
     addNewRoom(state, actions) {
       const newRoom = actions.payload.room;
+      const currentLoggedUser = localStorage.getItem("userName");
+      if (
+        newRoom.creator !== currentLoggedUser &&
+        newRoom.reciever !== currentLoggedUser
+      )
+        return;
+
+      const roomName =
+        newRoom.creator === currentLoggedUser
+          ? newRoom.reciever
+          : newRoom.creator;
+
+      const keyOb = state.publicKeys.find(
+        (keyObj) => keyObj.username === roomName
+      );
+      const publicKey = keyOb.key;
+      const ecdh = crypto.createECDH("secp256k1");
+      ecdh.setPrivateKey(localStorage.getItem("KEY"), "base64");
+      const sharedSecret = ecdh.computeSecret(publicKey, "base64", "hex");
+      newRoom.sharedSecret = sharedSecret;
       state.rooms.push(newRoom);
     },
 
@@ -46,6 +66,11 @@ const chatSlice = createSlice({
 
     setKeys(state, action) {
       state.publicKeys = action.payload.publicKeys;
+    },
+
+    setNewKey(state, action) {
+      state.publicKeys.push(action.payload);
+      console.log(state.publicKeys);
     },
 
     addNewMessage(state, actions) {

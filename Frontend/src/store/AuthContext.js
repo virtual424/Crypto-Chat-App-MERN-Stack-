@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Pusher from "pusher-js";
 import { CircularProgress } from "@material-ui/core";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -86,6 +87,22 @@ export const AuthContextProvider = (props) => {
 
     return () => {
       window.worker?.terminate();
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    var pusher = new Pusher("e32b36b52c95aaf22268", {
+      cluster: "ap2",
+    });
+
+    var channel = pusher.subscribe("keys");
+    channel.bind("inserted", function (data) {
+      dispatch(chatActions.setNewKey(data));
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
     };
   }, [dispatch]);
 
