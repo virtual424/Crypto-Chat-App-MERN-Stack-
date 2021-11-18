@@ -24,13 +24,15 @@ const connectDB = async () => {
   const keysChangeStream = keysCollection.watch();
 
   keysChangeStream.on("change", (change) => {
+    console.log("Change Log", change);
     try {
       if (change.operationType == "insert") {
+        console.log("fullDocumentLog:", change.fullDocument);
         const keyDetails = change.fullDocument;
 
         pusher.trigger("keys", "inserted", {
-          username: keyDetails.username,
-          key: keyDetails.key,
+          username: keyDetails.userName,
+          key: keyDetails.publicKey,
         });
       }
     } catch (error) {
