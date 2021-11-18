@@ -171,7 +171,7 @@ const AuthForm = () => {
                 className={styles.avatarInput}
               />
               <label className={styles.avatarLabel} htmlFor="avatarInput">
-                Choose a Profile Picture
+                Choose a Profile Picture(.png)
               </label>
             </div>
           ) : null}

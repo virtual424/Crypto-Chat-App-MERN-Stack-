@@ -68,6 +68,7 @@ export const AuthContextProvider = (props) => {
 
         fetchPublicKeys()
           .then((publicKeys) => {
+            console.log("publicKeys:", publicKeys);
             dispatch(chatActions.setKeys({ publicKeys }));
           })
           .catch((error) => {
@@ -97,6 +98,7 @@ export const AuthContextProvider = (props) => {
 
     var channel = pusher.subscribe("keys");
     channel.bind("inserted", function (data) {
+      console.log("pusherData: ", data);
       dispatch(chatActions.setNewKey(data));
     });
 
@@ -149,7 +151,6 @@ export const AuthContextProvider = (props) => {
           message: `This is your privateKey kindly keep it safe: ${privateKey}`,
         })
       );
-      // window.location.reload();
     } catch (error) {
       dispatch(
         uiActions.showDialog({

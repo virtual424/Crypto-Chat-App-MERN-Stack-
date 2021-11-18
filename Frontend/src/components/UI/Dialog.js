@@ -18,6 +18,7 @@ const Dialog = (props) => {
         message: null,
       })
     );
+    window.location.reload();
   };
 
   const content = (

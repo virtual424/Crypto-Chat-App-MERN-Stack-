@@ -24,7 +24,6 @@ const chatSlice = createSlice({
         newRoom.creator === currentLoggedUser
           ? newRoom.reciever
           : newRoom.creator;
-
       const keyOb = state.publicKeys.find(
         (keyObj) => keyObj.username === roomName
       );
@@ -69,8 +68,8 @@ const chatSlice = createSlice({
     },
 
     setNewKey(state, action) {
+      console.log("setNewKeyLog: ", action.payload);
       state.publicKeys.push(action.payload);
-      console.log(state.publicKeys);
     },
 
     addNewMessage(state, actions) {

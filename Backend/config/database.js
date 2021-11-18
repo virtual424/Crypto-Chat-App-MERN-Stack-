@@ -20,6 +20,24 @@ const connectDB = async () => {
   const roomsCollection = db.collection("rooms");
   const roomChangeStream = roomsCollection.watch();
 
+  const keysCollection = db.collection("keys");
+  const keysChangeStream = keysCollection.watch();
+
+  keysChangeStream.on("change", (change) => {
+    try {
+      if (change.operationType == "insert") {
+        const keyDetails = change.fullDocument;
+
+        pusher.trigger("keys", "inserted", {
+          username: keyDetails.username,
+          key: keyDetails.key,
+        });
+      }
+    } catch (error) {
+      return next(error);
+    }
+  });
+
   msgChangeStream.on("change", (change) => {
     try {
       if (change.operationType == "insert") {

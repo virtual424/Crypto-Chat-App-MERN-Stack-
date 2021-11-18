@@ -77,14 +77,13 @@ const ChatFooter = () => {
 
         resetMessage();
         return payload64;
+      } else {
+        const error = Error(
+          "Cannot Encrypt Message. Please Check your private Key"
+        );
+        console.log({ error });
+        throw error;
       }
-      // } else {
-      //   const error = Error(
-      //     "Cannot Encrypt Message. Please Check your private Key"
-      //   );
-      //   console.log({ error });
-      //   throw error;
-      // }
     } catch (error) {
       dispatch(
         uiActions.showDialog({
