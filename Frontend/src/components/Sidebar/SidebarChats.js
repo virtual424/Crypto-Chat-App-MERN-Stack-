@@ -24,8 +24,8 @@ const SidebarChats = () => {
   }, [userId, dispatch, authToken]);
 
   useEffect(() => {
-    const pusher = new Pusher("e32b36b52c95aaf22268", {
-      cluster: "ap2",
+    const pusher = new Pusher(process.env.PUSHER_KEY, {
+      cluster: process.env.PUSHER_CLUSTER,
     });
 
     const channel = pusher.subscribe("rooms");
@@ -94,8 +94,8 @@ const ChatTile = (props) => {
   }, [messageRoomId, authToken]);
 
   useEffect(() => {
-    const pusher = new Pusher("e32b36b52c95aaf22268", {
-      cluster: "ap2",
+    const pusher = new Pusher(process.env.PUSHER_KEY, {
+      cluster: process.env.PUSHER_CLUSTER,
     });
 
     const channel = pusher.subscribe("messages");

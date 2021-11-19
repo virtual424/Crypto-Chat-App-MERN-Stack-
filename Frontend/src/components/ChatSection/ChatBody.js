@@ -39,8 +39,8 @@ const ChatBody = () => {
   }, [messages]);
 
   useEffect(() => {
-    var pusher = new Pusher("e32b36b52c95aaf22268", {
-      cluster: "ap2",
+    var pusher = new Pusher(process.env.PUSHER_KEY, {
+      cluster: process.env.PUSHER_CLUSTER,
     });
 
     var channel = pusher.subscribe("messages");
