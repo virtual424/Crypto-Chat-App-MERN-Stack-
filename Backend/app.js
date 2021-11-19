@@ -4,7 +4,8 @@ const connectDB = require("./config/database");
 const multer = require("multer");
 const { protect } = require("./middleware/auth");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const helmet = require("helmet");
+const compression = require("compression");
 
 const app = express();
 const fileStorage = multer.diskStorage({
@@ -24,6 +25,9 @@ const fileStorage = multer.diskStorage({
 const upload = multer({ storage: fileStorage }).single("file");
 
 app.use(cors());
+app.use(helmet());
+app.use(compression());
+
 app.use(express.json({ limit: "8mb" }));
 app.use((req, res, next) => {
   upload(req, res, (err) => {

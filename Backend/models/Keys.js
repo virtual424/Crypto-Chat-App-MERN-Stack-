@@ -12,10 +12,4 @@ const keysSchema = new Schema({
   },
 });
 
-// roomsSchema.methods.addMessage = function (message) {
-//   const messageId = message._id;
-//   this.messages.push({ messageId });
-//   this.save();
-// };
-
 module.exports = mongoose.model("keys", keysSchema);

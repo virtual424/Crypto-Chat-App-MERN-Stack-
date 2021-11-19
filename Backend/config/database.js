@@ -5,10 +5,10 @@ const connectDB = async () => {
   await mongoose.connect(process.env.MONGO_URI);
 
   const pusher = new Pusher({
-    appId: "1272833",
-    key: "e32b36b52c95aaf22268",
-    secret: "92b1601b6b8c969ff99a",
-    cluster: "ap2",
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.PUSHER_KEY,
+    secret: process.env.PUSHER_SECRET,
+    cluster: process.env.PUSHER_CLUSTER,
     useTLS: true,
   });
 
